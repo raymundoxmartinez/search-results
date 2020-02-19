@@ -1,12 +1,21 @@
 import * as React from 'react'
 import { Router } from '@reach/router'
-import Root from '../routes/Root'
-
+import SearchResults from '../routes/SearchResults'
+import Layout from '../components/Layout'
+import { ThemeProvider } from '@material-ui/styles'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import theme from '../theme'
 const App: React.FC = () => {
   return (
-    <Router>
-      <Root path='/' />
-    </Router>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Layout>
+        <Router>
+          <SearchResults path='/' />
+        </Router>
+      </Layout>
+    </ThemeProvider >
+
   );
 }
 
