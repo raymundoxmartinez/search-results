@@ -1,6 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AppThunk } from '../../app/store'
 import axios from 'axios'
+import MockAdapter from 'axios-mock-adapter'
+import mockMovies from '../../mock/mockMovies'
+
+const mockAxios = new MockAdapter(axios);
+
+mockAxios.onGet('/movies').reply(200, mockMovies);
 
 interface Movie {
     id: string,
@@ -16,6 +22,8 @@ export interface SearchResultsState {
     error: string | null
     ids: string[]
     mapper: Record<string, any>
+    searchResults: any[]
+
 }
 
 const searchResultsInitialState: SearchResultsState = {
@@ -23,7 +31,8 @@ const searchResultsInitialState: SearchResultsState = {
     isLoading: false,
     error: null,
     ids: [],
-    mapper: {}
+    mapper: {},
+    searchResults: []
 }
 
 const startLoading = (state: SearchResultsState) => {
@@ -46,6 +55,7 @@ const searchResults = createSlice({
                 state.ids.push(item.id)
                 state.mapper[item.id] = item
             })
+            state.searchResults = data
             state.count = data.length
             state.isLoading = false
             state.error = null
@@ -73,7 +83,6 @@ export const fetchSearchResults = (): AppThunk => async dispatch => {
             return results
         })
         dispatch(getSearchResultsSuccess(searchResults))
-
     } catch (error) {
         dispatch(getSearchResultsFailure(error.toString()))
     }

@@ -31,7 +31,7 @@ const Navbar = () => {
                     </div>
                     <div className={classes.menuOptions} >
                         <Button color="inherit">All</Button>
-                        <Button color="inherit"
+                        <Button style={{borderBottom:'5px solid black'}} color="inherit"
                             startIcon={<TheatersOutlinedIcon />}
                         >Movies</Button>
                         <Button color="inherit"
