@@ -3,8 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1,
-        // height:195,
-        // paddingTop:35
     },
     menuButton: {
         marginRight: theme.spacing(2),
@@ -16,7 +14,10 @@ const useStyles = makeStyles(theme => ({
     },
     appBar: {
         height: 250,
-        paddingTop: 30
+        paddingTop: 30,
+        backgroundColor: 'white',
+        color: 'black',
+        boxShadow: 'none'
     },
     titleContainer: {
         flexGrow: 1

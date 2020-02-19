@@ -10,7 +10,7 @@ interface Movie {
 interface Movies {
     data: Movie[]
 }
-interface SearchResultsState {
+export interface SearchResultsState {
     count: number
     isLoading: boolean
     error: string | null
