@@ -1,23 +1,29 @@
 import * as React from 'react'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
+import { Button } from '@material-ui/core'
 import { fetchSearchResults } from './searchResultsSlice'
 import SearchResultsList from '../../components/List'
 
 const SearchResults = (props: { [key: string]: any }) => {
+
     const dispatch = useDispatch()
 
-    const { searchResultsLoading, searchResultsError, searchResults } = useSelector(
+    const [filteredResults, setFilteredResults] = React.useState([])
+
+    const { searchResultsLoading, searchResultsError, searchResults, filters } = useSelector(
         (state: any) => {
             return {
                 searchResultsLoading: state.searchResults.isLoading,
                 searchResultsError: state.searchResults.error,
-                searchResults: state.searchResults.searchResults
+                searchResults: state.searchResults.searchResults,
+                filters: state.navbar.filters
             }
         },
         shallowEqual
     )
 
     React.useEffect(() => {
+        debugger
         if (!searchResults.length) {
             debugger
             dispatch(fetchSearchResults())
@@ -25,11 +31,25 @@ const SearchResults = (props: { [key: string]: any }) => {
     }
         , [dispatch, searchResults])
 
+    React.useEffect(() => {
+        debugger
+        if (searchResults.length) {
+            // dispatch(getSearchResultsStart())
+            const anyFilters = Object.values(filters).includes(true)
+            if (anyFilters) {
+                const filteredSearchResults = searchResults.filter((result: any) => filters[result.rating] === true)
+                setFilteredResults(filteredSearchResults)
+            } else {
+                setFilteredResults(searchResults)
+            }
+        }
+    }
+        , [filters, dispatch, searchResults])
 
     let renderedSearchResults
-    if (searchResults.length) {
+    if (filteredResults.length) {
         debugger
-        renderedSearchResults = <SearchResultsList items={searchResults} />
+        renderedSearchResults = <SearchResultsList items={filteredResults} />
     } else if (searchResultsLoading) {
         renderedSearchResults = (
             <div>
@@ -44,10 +64,16 @@ const SearchResults = (props: { [key: string]: any }) => {
             </div>
         )
     }
-
     return (
-        <div >
-            {renderedSearchResults}
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', flexGrow: 1 }} >
+                {renderedSearchResults}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Button variant="outlined" color="inherit">
+                    Load More
+            </Button>
+            </div>
         </div>
     )
 }

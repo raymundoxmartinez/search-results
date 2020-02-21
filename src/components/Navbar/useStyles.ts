@@ -30,6 +30,9 @@ const useStyles = makeStyles(theme => ({
     subToolbar: {
         display: 'flex',
         justifyContent: 'flex-end'
+    },
+    filterbar: {
+        display: 'hidden'
     }
 }));
 

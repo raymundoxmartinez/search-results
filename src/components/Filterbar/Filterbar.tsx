@@ -1,25 +1,29 @@
 import React from 'react';
-import { Toolbar, Button, IconButton, Icon } from '@material-ui/core';
-import Grow from '@material-ui/core/Grow';
+import { Toolbar, Button, IconButton } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
-import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import ExpandMoreOutlinedIcon from '@material-ui/icons/ExpandMoreOutlined';
 import Close from '@material-ui/icons/Close';
 import useStyles from './useStyles'
 
 
-const Filterbar = () => {
+const Filterbar = ({ handleToggleFilterbar, handleOnChangeFilter, handleApplyFilters, handleClearFilters, filters }: any) => {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const anchorRef: any = React.useRef(null);
+    const [arrowRef, setArrowRef] = React.useState(null);
 
 
     const handleToggle = () => {
         setOpen(prevOpen => !prevOpen);
     };
+
+
 
     const handleClose = (event: any) => {
         if (anchorRef.current && anchorRef.current.contains(event.target)) {
@@ -51,39 +55,66 @@ const Filterbar = () => {
                     startIcon={<ExpandMoreOutlinedIcon />}
                     onClick={handleToggle}
                     ref={anchorRef}
-                    aria-controls={open ? 'menu-list-grow' : undefined}
-                    aria-haspopup="true"
                 >
                     Rating
             </Button>
+                <Popper
+                    className={classes.popper}
+                    open={open}
+                    placement='bottom'
+                    anchorEl={anchorRef.current}
+                    modifiers={{
+                        arrow: {
+                            enabled: true,
+                            element: arrowRef,
+                        },
+                    }}
+                    transition
+                >
+                    <>
+                        {/* 
+                             // @ts-ignore */}
+                        {true && <span className={classes.arrow} ref={setArrowRef} />}
+                        <Paper >
+                            <ClickAwayListener onClickAway={handleClose}>
+                                <MenuList autoFocusItem={open}
+                                    onKeyDown={handleListKeyDown}>
+                                    <FormGroup style={{ padding: 5 }}>
+                                        <FormControlLabel style={{ height: 20 }} control={<Checkbox value="G" onChange={handleOnChangeFilter} />} label="G"
+                                            checked={filters['G']}
+                                        />
+                                        <FormControlLabel style={{ height: 20 }} control={<Checkbox
+                                            onChange={handleOnChangeFilter}
+                                            checked={filters['PG']}
+                                            value="PG" />} label="PG" />
+                                        <FormControlLabel style={{ height: 20 }} control={<Checkbox
+                                            onChange={handleOnChangeFilter}
+                                            checked={filters['PG-13']}
+                                            value="PG-13" />} label="PG-13" />
+                                        <FormControlLabel style={{ height: 20 }} control={<Checkbox
+                                            onChange={handleOnChangeFilter}
+                                            checked={filters['R']}
+                                            value="R" />} label="R" />
 
-                <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
-                    {({ TransitionProps, placement }) => (
-                        <Grow
-                            {...TransitionProps}
-                            style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
-                        >
-                            <Paper>
-                                <ClickAwayListener onClickAway={handleClose}>
-                                    <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                                        <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                        <MenuItem onClick={handleClose}>My account</MenuItem>
-                                        <MenuItem onClick={handleClose}>Logout</MenuItem>
-                                    </MenuList>
-                                </ClickAwayListener>
-                            </Paper>
-                        </Grow>
-                    )}
+                                    </FormGroup>
+                                </MenuList>
+                            </ClickAwayListener>
+                        </Paper>
+                    </>
                 </Popper>
             </div>
             <div className={classes.rightOptionsContainer}>
-                <Button variant="outlined" style={{ backgroundColor: 'white', margin: 5 }}>
+                <Button
+                    onClick={handleClearFilters}
+                    variant="outlined" style={{ backgroundColor: 'white', margin: 5 }}>
                     Clear Filters
                 </Button>
-                <Button variant="outlined" style={{ backgroundColor: 'white', margin: 5 }}>
+                <Button
+                    onClick={handleApplyFilters}
+                    variant="outlined" style={{ backgroundColor: 'white', margin: 5 }}>
                     Apply Filters
             </Button>
-                <IconButton color="inherit">
+                <IconButton onClick={handleToggleFilterbar} color="inherit">
                     <Close />
                 </IconButton>
             </div>
