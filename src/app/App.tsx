@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Router } from '@reach/router'
+import { Router, Redirect } from '@reach/router'
 import SearchResults from '../routes/SearchResults'
 import Layout from '../components/Layout'
 import { ThemeProvider } from '@material-ui/styles'
@@ -11,7 +11,7 @@ const App: React.FC = () => {
       <CssBaseline />
       <Layout>
         <Router>
-          <SearchResults path='/' />
+          <SearchResults path="/search-results" render={() => <Redirect to="/" />} />
         </Router>
       </Layout>
     </ThemeProvider >
