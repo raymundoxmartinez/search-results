@@ -1,29 +1,37 @@
 import React from 'react';
-import { Toolbar, Button, IconButton } from '@material-ui/core';
-import Paper from '@material-ui/core/Paper';
-import Popper from '@material-ui/core/Popper';
-import MenuList from '@material-ui/core/MenuList';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import {
+    Toolbar,
+    Button,
+    IconButton,
+    Paper,
+    Popper,
+    MenuList,
+    FormGroup,
+    FormControlLabel,
+    Checkbox,
+    ClickAwayListener,
+} from '@material-ui/core';
 import ExpandMoreOutlinedIcon from '@material-ui/icons/ExpandMoreOutlined';
 import Close from '@material-ui/icons/Close';
+
 import useStyles from './useStyles'
 
 
-const Filterbar = ({ handleToggleFilterbar, handleOnChangeFilter, handleApplyFilters, handleClearFilters, filters }: any) => {
+const Filterbar = ({
+    handleToggleFilterbar,
+    handleOnChangeFilter,
+    handleApplyFilters,
+    handleClearFilters,
+    filters
+}: any) => {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const anchorRef: any = React.useRef(null);
     const [arrowRef, setArrowRef] = React.useState(null);
 
-
     const handleToggle = () => {
         setOpen(prevOpen => !prevOpen);
     };
-
-
 
     const handleClose = (event: any) => {
         if (anchorRef.current && anchorRef.current.contains(event.target)) {
@@ -32,7 +40,7 @@ const Filterbar = ({ handleToggleFilterbar, handleOnChangeFilter, handleApplyFil
         setOpen(false);
     };
 
-    function handleListKeyDown(event: any) {
+    const handleListKeyDown = (event: any) => {
         if (event.key === 'Tab') {
             event.preventDefault();
             setOpen(false);
@@ -41,23 +49,19 @@ const Filterbar = ({ handleToggleFilterbar, handleOnChangeFilter, handleApplyFil
     return (
         <Toolbar className={classes.toolbar}>
             <div className={classes.leftOptionsContainer}>
-                <Button color="inherit"
-                    startIcon={<ExpandMoreOutlinedIcon />}
-                >
+                <Button startIcon={<ExpandMoreOutlinedIcon />}>
                     Release Year
-            </Button>
-                <Button color="inherit"
-                    startIcon={<ExpandMoreOutlinedIcon />}
-                >
+                </Button>
+                <Button startIcon={<ExpandMoreOutlinedIcon />}>
                     Genre
-            </Button>
-                <Button color="inherit"
+                 </Button>
+                <Button
                     startIcon={<ExpandMoreOutlinedIcon />}
                     onClick={handleToggle}
                     ref={anchorRef}
                 >
                     Rating
-            </Button>
+                </Button>
                 <Popper
                     className={classes.popper}
                     open={open}
@@ -79,23 +83,51 @@ const Filterbar = ({ handleToggleFilterbar, handleOnChangeFilter, handleApplyFil
                             <ClickAwayListener onClickAway={handleClose}>
                                 <MenuList autoFocusItem={open}
                                     onKeyDown={handleListKeyDown}>
-                                    <FormGroup style={{ padding: 5 }}>
-                                        <FormControlLabel style={{ height: 20 }} control={<Checkbox value="G" onChange={handleOnChangeFilter} />} label="G"
+                                    <FormGroup className={classes.formGroup}>
+                                        <FormControlLabel
+                                            className={classes.formControlLabel}
+                                            control={
+                                                <Checkbox
+                                                    value="G"
+                                                    onChange={handleOnChangeFilter}
+                                                />
+                                            }
+                                            label="G"
                                             checked={filters['G']}
                                         />
-                                        <FormControlLabel style={{ height: 20 }} control={<Checkbox
-                                            onChange={handleOnChangeFilter}
-                                            checked={filters['PG']}
-                                            value="PG" />} label="PG" />
-                                        <FormControlLabel style={{ height: 20 }} control={<Checkbox
-                                            onChange={handleOnChangeFilter}
-                                            checked={filters['PG-13']}
-                                            value="PG-13" />} label="PG-13" />
-                                        <FormControlLabel style={{ height: 20 }} control={<Checkbox
-                                            onChange={handleOnChangeFilter}
-                                            checked={filters['R']}
-                                            value="R" />} label="R" />
-
+                                        <FormControlLabel
+                                            className={classes.formControlLabel}
+                                            control={
+                                                <Checkbox
+                                                    onChange={handleOnChangeFilter}
+                                                    checked={filters['PG']}
+                                                    value="PG"
+                                                />
+                                            }
+                                            label="PG"
+                                        />
+                                        <FormControlLabel
+                                            className={classes.formControlLabel}
+                                            control={
+                                                <Checkbox
+                                                    onChange={handleOnChangeFilter}
+                                                    checked={filters['PG-13']}
+                                                    value="PG-13"
+                                                />
+                                            }
+                                            label="PG-13"
+                                        />
+                                        <FormControlLabel
+                                            className={classes.formControlLabel}
+                                            control={
+                                                <Checkbox
+                                                    onChange={handleOnChangeFilter}
+                                                    checked={filters['R']}
+                                                    value="R"
+                                                />
+                                            }
+                                            label="R"
+                                        />
                                     </FormGroup>
                                 </MenuList>
                             </ClickAwayListener>
@@ -106,15 +138,19 @@ const Filterbar = ({ handleToggleFilterbar, handleOnChangeFilter, handleApplyFil
             <div className={classes.rightOptionsContainer}>
                 <Button
                     onClick={handleClearFilters}
-                    variant="outlined" style={{ backgroundColor: 'white', margin: 5 }}>
+                    variant="outlined"
+                    className={classes.clearFiltersBtn}
+                >
                     Clear Filters
                 </Button>
                 <Button
                     onClick={handleApplyFilters}
-                    variant="outlined" style={{ backgroundColor: 'white', margin: 5 }}>
+                    variant="outlined"
+                    className={classes.applyFiltersBtn}
+                >
                     Apply Filters
             </Button>
-                <IconButton onClick={handleToggleFilterbar} color="inherit">
+                <IconButton onClick={handleToggleFilterbar} >
                     <Close />
                 </IconButton>
             </div>

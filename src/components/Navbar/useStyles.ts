@@ -19,6 +19,9 @@ const useStyles = makeStyles(theme => ({
         color: 'black',
         boxShadow: 'none'
     },
+    appBarGrow:{
+        height: 350,
+    },
     titleContainer: {
         flexGrow: 1
     },
@@ -31,8 +34,17 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         justifyContent: 'flex-end'
     },
-    filterbar: {
-        display: 'hidden'
+    filterbarHidden: {
+        visibility: 'hidden'
+    },
+    filterbarNone: {
+        display: 'none'
+    },
+    selectedMenuItem: {
+        borderBottom: '5px solid black'
+    },
+    filterbarContainer: {
+        height: 100
     }
 }));
 

@@ -2,7 +2,8 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
     toolbar: {
-        display: 'flex'
+        display: 'flex',
+        flexWrap: 'wrap'
     },
     leftOptionsContainer: {
         display: 'flex',
@@ -40,7 +41,21 @@ const useStyles = makeStyles(theme => ({
             height: 0,
             borderStyle: 'solid',
         }
-    }
+    },
+    formGroup: {
+        padding: 5,
+    },
+    formControlLabel: {
+        height: 20
+    },
+    clearFiltersBtn: {
+        backgroundColor: 'white',
+        margin: 5
+    },
+    applyFiltersBtn: {
+        backgroundColor: 'white',
+        margin: 5
+    },
 }));
 
 export default useStyles

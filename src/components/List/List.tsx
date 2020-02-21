@@ -1,11 +1,13 @@
 import React from 'react'
 import ItemCard from '../ItemCard'
+import useStyles from './useStyles'
 
-const List = ({ items }: any) => {
+const List = ({ items, isGridViewOn }: any) => {
+    const classes = useStyles()
     return (
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div className={classes.root}>
             {items.map((item: any) => {
-                return <ItemCard key={item.id} item={item} />
+                return <ItemCard key={item.id} item={item} isGridViewOn={isGridViewOn} />
             })}
         </div>
     )

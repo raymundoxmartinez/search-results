@@ -1,7 +1,7 @@
 import makeStyles from '@material-ui/core/styles/makeStyles'
-const useStyles = makeStyles((theme: any) => {
+const useStyles = makeStyles(() => {
     return {
-        root:{
+        root: {
             width: '90%',
         },
         childrenContainer: {
@@ -9,7 +9,6 @@ const useStyles = makeStyles((theme: any) => {
             display: 'flex',
             flexDirection: 'column',
             minWidth: 320,
-            // maxWidth: 800,
         },
     }
 })

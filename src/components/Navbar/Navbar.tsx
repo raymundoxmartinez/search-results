@@ -1,22 +1,37 @@
 import React, { useState } from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux'
+import classNames from 'classnames'
+import {
+    AppBar,
+    Toolbar,
+    Typography,
+    Button,
+    Drawer,
+    IconButton,
+    useMediaQuery
+} from '@material-ui/core';
+import ViewListIcon from '@material-ui/icons/ViewList';
+import ViewListOutlinedIcon from '@material-ui/icons/ViewListOutlined';
+import ViewComfyIcon from '@material-ui/icons/ViewComfy';
+import ViewComfyOutlinedIcon from '@material-ui/icons/ViewComfyOutlined';
 import ExpandMoreOutlinedIcon from '@material-ui/icons/ExpandMoreOutlined';
 import TheatersOutlinedIcon from '@material-ui/icons/TheatersOutlined';
 import TvOutlinedIcon from '@material-ui/icons/TvOutlined';
 import SmsOutlinedIcon from '@material-ui/icons/SmsOutlined';
 import VideogameAssetOutlinedIcon from '@material-ui/icons/VideogameAssetOutlined';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-import classNames from 'classnames'
+import MenuIcon from '@material-ui/icons/Menu';
+
 import Filterbar from '../Filterbar'
 import useStyles from './useStyles'
-import { useDispatch, useSelector, shallowEqual } from 'react-redux'
-import { handleRemoveFilters, handleAddFilters } from './navbarSlice'
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { Drawer, IconButton } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
+
+import {
+    handleRemoveFilters,
+    handleAddFilters,
+    handleTurnOffGridView,
+    handleTurnOnGridView
+} from './navbarSlice'
+
 const initialFilterValues = {
     'G': false,
     'PG': false,
@@ -25,21 +40,17 @@ const initialFilterValues = {
 }
 const Navbar = () => {
     const [isFilterOn, setFilterStatus] = React.useState(false)
-    const [filtersToAdd, setFiltersToAdd] = React.useState<Record<string, any>>(initialFilterValues)
     const [isDrawerOpen, setDrawerState] = useState(false)
+    const [filtersToAdd, setFiltersToAdd] = React.useState<Record<string, any>>(initialFilterValues)
 
     const classes = useStyles();
     const matchesDesktop = useMediaQuery('(min-width:800px)');
     const dispatch = useDispatch()
 
-    const { filters } = useSelector(
-        (state: any) => {
-            return {
-                filters: state.navbar.filters,
-            }
-        },
-        shallowEqual
-    )
+
+    const { isGridViewOn } = useSelector((state: any) => {
+        return { isGridViewOn: state.navbar.isGridViewOn }
+    }, shallowEqual)
 
     const handleOnChangeFilter = (event: any) => {
         const isFilterValueChecked = event.target.checked
@@ -51,12 +62,19 @@ const Navbar = () => {
         }
     }
 
+
     const handleToggleFilterbar = () => {
         setFilterStatus(prevFilterStatus => !prevFilterStatus)
     }
 
+    const _handleTurnOffGridView = () => {
+        dispatch(handleTurnOffGridView())
+    }
+    const _handleTurnOnGridView = () => {
+        dispatch(handleTurnOnGridView())
+    }
+
     const handleApplyFilters = () => {
-        debugger
         dispatch(handleAddFilters(filtersToAdd))
     }
 
@@ -69,97 +87,127 @@ const Navbar = () => {
         setDrawerState(prevDrawerState => !prevDrawerState)
     };
 
-    let filterClass = classNames({
-        [classes.filterbar]: isFilterOn
+    const filterClass = classNames({
+        [classes.filterbarHidden]: !isFilterOn && matchesDesktop,
+        [classes.filterbarNone]: !isFilterOn && !matchesDesktop,
+        [classes.filterbarContainer]: true
     })
+    const appBarClass = classNames({
+        [classes.appBar]: true,
+        [classes.appBarGrow]: isFilterOn && !matchesDesktop,
+    })
+
+    let renderedMenu
+    if (matchesDesktop) {
+        renderedMenu = (
+            <>
+                <Toolbar>
+                    <div className={classes.titleContainer}>
+                        <Typography variant="h6" className={classes.title}
+                        >
+                            <strong>
+                                Search Results
+                             </strong>
+                        </Typography>
+                    </div>
+                    <div className={classes.menuOptions} >
+                        <Button >All</Button>
+                        <Button
+                            className={classes.selectedMenuItem}
+                            startIcon={<TheatersOutlinedIcon />}
+                        >
+                            Movies
+                        </Button>
+                        <Button startIcon={<TvOutlinedIcon />}>
+                            TV shows
+                        </Button>
+                        <Button startIcon={<VideogameAssetOutlinedIcon />}>Games & Apps</Button>
+                        <Button startIcon={<SmsOutlinedIcon />}>Blog</Button>
+                        <Button >Other</Button>
+                        <IconButton onClick={_handleTurnOnGridView}>
+                            {isGridViewOn ? <ViewComfyIcon /> : <ViewComfyOutlinedIcon />}
+                        </IconButton>
+                        <IconButton onClick={_handleTurnOffGridView}>
+                            {isGridViewOn ? <ViewListOutlinedIcon /> : <ViewListIcon />}
+
+                        </IconButton>
+                    </div>
+                </Toolbar>
+                <Toolbar disableGutters={true} className={classes.subToolbar}>
+                    <Button
+                        onClick={handleToggleFilterbar}
+                        endIcon={isFilterOn ? <ExpandLessIcon /> : <ExpandMoreOutlinedIcon />}
+                    >
+                        Filter
+                    </Button>
+                    <Button
+                        endIcon={<ExpandMoreOutlinedIcon />}
+                    >
+                        Sorted By:Popularity
+                    </Button>
+                </Toolbar>
+            </>
+        )
+    } else {
+        renderedMenu = (
+            <>
+                <Toolbar>
+                    <div className={classes.titleContainer}>
+                        <Typography variant="h6" className={classes.title}
+                        >
+                            <strong>
+                                Search Results
+                            </strong>
+                        </Typography>
+                    </div>
+                    <IconButton onClick={toggleDrawer}>
+                        <MenuIcon />
+                    </IconButton>
+                </Toolbar>
+                <Toolbar disableGutters={true} className={classes.subToolbar}>
+                    <IconButton onClick={_handleTurnOnGridView}>
+                        {isGridViewOn ? <ViewComfyIcon /> : <ViewComfyOutlinedIcon />}
+                    </IconButton>
+                    <IconButton onClick={_handleTurnOffGridView}>
+                        {isGridViewOn ? <ViewListOutlinedIcon /> : <ViewListIcon />}
+
+                    </IconButton>
+                    <Button
+                        onClick={handleToggleFilterbar}
+
+                        endIcon={isFilterOn ? <ExpandLessIcon /> : <ExpandMoreOutlinedIcon />}
+                    >
+                        Filter
+                    </Button>
+                    <Button
+                        endIcon={<ExpandMoreOutlinedIcon />}
+                    >
+                        Sorted By:Popularity
+                    </Button>
+                </Toolbar>
+                <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
+                    <Button >All</Button>
+                    <Button
+                        className={classes.selectedMenuItem}
+                        startIcon={<TheatersOutlinedIcon />}
+                    >
+                        Movies
+                    </Button>
+                    <Button startIcon={<TvOutlinedIcon />}>TV shows</Button>
+                    <Button startIcon={<VideogameAssetOutlinedIcon />}>Games & Apps</Button>
+                    <Button startIcon={<SmsOutlinedIcon />}>Blog</Button>
+                    <Button >Other</Button>
+                </Drawer>
+            </>
+        )
+    }
 
     return (
         <div className={classes.root}>
             <AppBar position="static"
-                className={classes.appBar}>
-                {matchesDesktop &&
-                    <>
-                        <Toolbar>
-                            <div className={classes.titleContainer}>
-                                <Typography variant="h6" className={classes.title}
-                                >
-                                    <strong>
-                                        Search Results
-                        </strong>
-                                </Typography>
-                            </div>
-                            <div className={classes.menuOptions} >
-                                <Button color="inherit">All</Button>
-                                <Button style={{ borderBottom: '5px solid black' }} color="inherit"
-                                    startIcon={<TheatersOutlinedIcon />}
-                                >Movies</Button>
-                                <Button color="inherit"
-                                    startIcon={<TvOutlinedIcon />}
-                                >TV shows</Button>
-                                <Button color="inherit"
-                                    startIcon={<VideogameAssetOutlinedIcon />}
-                                >Games & Apps</Button>
-                                <Button color="inherit"
-                                    startIcon={<SmsOutlinedIcon />}
-                                >Blog</Button>
-                                <Button color="inherit">Other</Button>
-                            </div>
-                        </Toolbar>
-                        <Toolbar disableGutters={true} className={classes.subToolbar}>
-                            <Button
-                                onClick={handleToggleFilterbar}
-                                color="inherit"
-                                endIcon={isFilterOn ? <ExpandLessIcon /> : <ExpandMoreOutlinedIcon />}
-                            >Filter</Button> <Button color="inherit"
-                                endIcon={<ExpandMoreOutlinedIcon />}
-                            >Sorted By:Popularity</Button>
-                        </Toolbar>
-                    </>
-                }
-                {!matchesDesktop &&
-                    (
-                        <>
-                            <Toolbar>
-                                <div className={classes.titleContainer}>
-                                    <Typography variant="h6" className={classes.title}
-                                    >
-                                        <strong>
-                                            Search Results
-                        </strong>
-                                    </Typography>
-                                </div>
-                                <IconButton onClick={toggleDrawer}>
-                                    <MenuIcon />
-                                </IconButton>
-                            </Toolbar>
-                            <Toolbar disableGutters={true} className={classes.subToolbar}>
-                                <Button
-                                    onClick={handleToggleFilterbar}
-                                    color="inherit"
-                                    endIcon={isFilterOn ? <ExpandLessIcon /> : <ExpandMoreOutlinedIcon />}
-                                >Filter</Button> <Button color="inherit"
-                                    endIcon={<ExpandMoreOutlinedIcon />}
-                                >Sorted By:Popularity</Button>
-                            </Toolbar>
-                            <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
-                                <Button color="inherit">All</Button>
-                                <Button style={{ borderBottom: '5px solid black' }} color="inherit"
-                                    startIcon={<TheatersOutlinedIcon />}
-                                >Movies</Button>
-                                <Button color="inherit"
-                                    startIcon={<TvOutlinedIcon />}
-                                >TV shows</Button>
-                                <Button color="inherit"
-                                    startIcon={<VideogameAssetOutlinedIcon />}
-                                >Games & Apps</Button>
-                                <Button color="inherit"
-                                    startIcon={<SmsOutlinedIcon />}
-                                >Blog</Button>
-                                <Button color="inherit">Other</Button>
-                            </Drawer>
-                        </>
-                    )}
-                <div className={filterClass} style={{ height: 100 }}>
+                className={appBarClass}>
+                {renderedMenu}
+                <div className={filterClass}>
                     {isFilterOn && <Filterbar
                         filters={filtersToAdd}
                         handleOnChangeFilter={handleOnChangeFilter}

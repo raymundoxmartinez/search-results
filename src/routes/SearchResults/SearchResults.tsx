@@ -10,29 +10,27 @@ const SearchResults = (props: { [key: string]: any }) => {
 
     const [filteredResults, setFilteredResults] = React.useState([])
 
-    const { searchResultsLoading, searchResultsError, searchResults, filters } = useSelector(
+    const { searchResultsLoading, searchResultsError, searchResults, filters, isGridViewOn } = useSelector(
         (state: any) => {
             return {
                 searchResultsLoading: state.searchResults.isLoading,
                 searchResultsError: state.searchResults.error,
                 searchResults: state.searchResults.searchResults,
-                filters: state.navbar.filters
+                filters: state.navbar.filters,
+                isGridViewOn: state.navbar.isGridViewOn
             }
         },
         shallowEqual
     )
 
     React.useEffect(() => {
-        debugger
         if (!searchResults.length) {
-            debugger
             dispatch(fetchSearchResults())
         }
     }
         , [dispatch, searchResults])
 
     React.useEffect(() => {
-        debugger
         if (searchResults.length) {
             // dispatch(getSearchResultsStart())
             const anyFilters = Object.values(filters).includes(true)
@@ -48,8 +46,7 @@ const SearchResults = (props: { [key: string]: any }) => {
 
     let renderedSearchResults
     if (filteredResults.length) {
-        debugger
-        renderedSearchResults = <SearchResultsList items={filteredResults} />
+        renderedSearchResults = <SearchResultsList items={filteredResults} isGridViewOn={isGridViewOn} />
     } else if (searchResultsLoading) {
         renderedSearchResults = (
             <div>
